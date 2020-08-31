@@ -6,7 +6,9 @@ In some multi-language / non-english language Windows environment (like Chinese 
 
 ## Usage
 Just add the English-Unites States to input language list in the Setting / Time & Language page of Windows.
-Notice: this plugin is in the early development, so the behavior is not determined if there is no English-Unites States in the input language list of Windows.
+
+<b>Notice</b>: this plugin is in the early development, so the behavior is not determined if there is no English-Unites States in the input language list of Windows.
+
 (the option interface for choosing the input language of auto-type will be provide in the future.)
 
 ## Installation
