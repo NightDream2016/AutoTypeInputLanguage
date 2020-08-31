@@ -14,4 +14,4 @@ Notice: this plugin is in the early development, so the behavior is not determin
 Just download the SwitchInputToEnglish.plgx file (see files above or click here), copy it to the KeePass application plugin directory and restart KeePass.
 
 ## Environment
-Testing OK on Windows 10 2004.
+Tested OK on Windows 10 2004.
