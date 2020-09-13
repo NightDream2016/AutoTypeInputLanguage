@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace SwitchInputToEnglish
+namespace AutoTypeInputLanguage
 {
     public class KeyboardLayout
     {

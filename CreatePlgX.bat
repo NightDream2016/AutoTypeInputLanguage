@@ -8,15 +8,13 @@ echo Creating PlgX folder
 mkdir PlgX
 
 echo Copying files
-xcopy "SwitchInputToEnglish" PlgX /s /e /exclude:PlgXExclude.txt
+xcopy "AutoTypeInputLanguage" PlgX /s /e /exclude:PlgXExclude.txt
 
 echo Compiling PlgX
-"KeePass/KeePass.exe" /plgx-create "%~dp0PlgX"
+"AutoTypeInputLanguage/bin/Release/KeePass.exe" /plgx-create "%~dp0PlgX"
 
 echo Releasing PlgX
-move /y PlgX.plgx "Releases/SwitchInputToEnglish.plgx"
+move /y PlgX.plgx "./AutoTypeInputLanguage.plgx"
 
 echo Cleaning up
 rmdir /s /q PlgX
-
-pause

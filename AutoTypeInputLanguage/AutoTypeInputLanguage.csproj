@@ -7,8 +7,8 @@
     <ProjectGuid>{50C894E8-AE13-4718-95FA-DDAE4CAB08F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SwitchInputToEnglish</RootNamespace>
-    <AssemblyName>SwitchInputToEnglish</AssemblyName>
+    <RootNamespace>AutoTypeInputLanguage</RootNamespace>
+    <AssemblyName>AutoTypeInputLanguage</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KeyboardLayout.cs" />
-    <Compile Include="SwitchInputToEnglish.cs" />
+    <Compile Include="AutoTypeInputLanguage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

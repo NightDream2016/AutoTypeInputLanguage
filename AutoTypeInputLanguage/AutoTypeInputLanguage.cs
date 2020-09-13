@@ -7,16 +7,15 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace SwitchInputToEnglish
+namespace AutoTypeInputLanguage
 {
-
-    public sealed class SwitchInputToEnglishExt : Plugin
+    public sealed class AutoTypeInputLanguageExt : Plugin
     {
-
-        private const string ConfigKey_AutoTypeInputMethod = "SwitchInputToEnglish_AutoTypeInputMethod";
+   
+        private const string AutoTypeInputLanguage_KeyboardLayoutId = "AutoTypeInputLanguage_KeyboardLayoutId";
 
         private const string PluginMenuTitle_English = "Auto Type Input Language";
-        private const string PluginMenuTitle_Chinese = "輸入法自動切換";
+        private const string PluginMenuTitle_Chinese = "自動輸入時的語言";
 
         private Dictionary<UInt32, KeyboardLayout> keyboardLayoutDictionary = new Dictionary<UInt32, KeyboardLayout>();
 
@@ -41,7 +40,7 @@ namespace SwitchInputToEnglish
 
         private void OnAutoType(object sender, AutoTypeEventArgs autoTypeEventArgs)
         {
-            switchInputMethod();
+            switchInputLanguage();
         }
 
         public override void Terminate()
@@ -105,9 +104,9 @@ namespace SwitchInputToEnglish
 
         #endregion
 
-        #region Switch Input Method Flow
+        #region Switch Input Langauge Flow
 
-        private void switchInputMethod()
+        private void switchInputLanguage()
         {
             UInt32 layoutId = autoTypeInputlayoutId();
             KeyboardLayout layout = keyboardLayoutDictionary[layoutId];
@@ -121,7 +120,7 @@ namespace SwitchInputToEnglish
         private UInt32 autoTypeInputlayoutId()
         {
             KeyboardLayout defaultLayout = defaultkeyboardLayout();
-            UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(ConfigKey_AutoTypeInputMethod, defaultLayout.Id);
+            UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(AutoTypeInputLanguage_KeyboardLayoutId, defaultLayout.Id);
             
             // If current language is not in the langauge list (maybe be removed).
             // Just using the default language (the first langauge in list)
@@ -135,7 +134,7 @@ namespace SwitchInputToEnglish
 
         private void setAutoTypeInputLayoutId(UInt32 layoutId)
         {
-            m_host.CustomConfig.SetULong(ConfigKey_AutoTypeInputMethod, layoutId);
+            m_host.CustomConfig.SetULong(AutoTypeInputLanguage_KeyboardLayoutId, layoutId);
         }
 
         #endregion
