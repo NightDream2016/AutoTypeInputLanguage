@@ -10,7 +10,7 @@ In some multi-language / non-english language Windows environment (like Chinese 
 3. Trigger the auto-type flow by hotkey / otherway, you will noticed that no matter what input language you use in your foreground window, it will auto-switch to you choosed language.
 
 ## Installation
-Just download the AutoTypeInputLanguage.plgx file (see files above or click here), copy it to the KeePass application plugin directory and restart KeePass.
+Just download the [AutoTypeInputLanguage.plgx](https://github.com/NightDream2016/AutoTypeInputLanguage/releases/download/v1.1.0/AutoTypeInputLanguage.plgx) file, copy it to the KeePass application plugin directory and restart KeePass.
 
 ## Environment
 Tested OK on Windows 10 2004.
@@ -20,6 +20,9 @@ Tested OK on Windows 10 2004.
 - 網路上有設定輸入法快捷鍵然後再讓KeePass的Auto-Type序列去trigger的做法，但依個人經驗來說不太可靠。
   - 很多時候無法順利切換成功，結果還是要手動切回英數再按Ctrl+A，實在太麻煩。
 - 最後乾脆自己用C#寫一個Plugin一勞永逸，就是本Plugin了。
+
+## 安裝
+下載 [AutoTypeInputLanguage.plgx](https://github.com/NightDream2016/AutoTypeInputLanguage/releases/download/v1.1.0/AutoTypeInputLanguage.plgx) 後複製至KeePass的Plugin目錄。
 
 ## 使用方法
 - 安裝此Plugin以後在KeePass的工具底下會多出一欄，其為目前使用者Windows的語系列表。
