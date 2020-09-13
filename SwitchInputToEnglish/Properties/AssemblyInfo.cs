@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 變更這些屬性的值即可修改組件的相關
 // 資訊。
 [assembly: AssemblyTitle("SwitchInputToEnglish")]
-[assembly: AssemblyDescription("A plugin that will auto-switch user's input method to english, to prevent the input from incorrect due to the input method issue.")]
+[assembly: AssemblyDescription("A plugin that will auto-switch user's input method, to prevent the input from incorrect due to the input method issue.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("NightDream")]
 [assembly: AssemblyProduct("KeePass Plugin")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCopyright("Copyright © 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // 您可以指定所有的值，或將組建編號或修訂編號設為預設值
 //方法是使用 '*'，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.42.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
