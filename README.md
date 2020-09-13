@@ -8,6 +8,7 @@ In some multi-language / non-english language Windows environment (like Chinese 
 - Install the plugin, set your preferred input language in **Tools >> Auto Type Input Language** .
   - If **English (United States)** is installed, it will use it as default language.
   - If no, application will choose the first language in list.
+  - You could choose any language installed on your system (If you want to auto-input your password with customized language)
 - After this, every time when KeePass trigger the auto-type flow by hotkey / otherway, you will noticed that no matter what input language you use in your foreground window, it will auto-switch to you choosed language.
 
 ## Installation
