@@ -5,9 +5,10 @@ A [KeePass v2.x](https://keepass.info/) plugin to auto switch input language whe
 In some multi-language / non-english language Windows environment (like Chinese / Japanese user), when using the global auto-type hot key, it will lead to incorrect input when input language is not english in foreground window.
 
 ## Usage
-1. add the English-Unites States (or other language could input your password correctly) to input language list in the Setting / Time & Language page of Windows.
-2. Set your preferred input language in **Tools >> Auto Type Input Language ** .
-3. Trigger the auto-type flow by hotkey / otherway, you will noticed that no matter what input language you use in your foreground window, it will auto-switch to you choosed language.
+- Install the plugin, set your preferred input language in **Tools >> Auto Type Input Language** .
+  - If **English (United States)** is installed, it will use it as default language.
+  - If no, application will choose the first language in list.
+- After this, every time when KeePass trigger the auto-type flow by hotkey / otherway, you will noticed that no matter what input language you use in your foreground window, it will auto-switch to you choosed language.
 
 ## Installation
 Just download the [AutoTypeInputLanguage.plgx](https://github.com/NightDream2016/AutoTypeInputLanguage/releases/download/v1.1.0/AutoTypeInputLanguage.plgx) file, copy it to the KeePass application plugin directory and restart KeePass.
