@@ -122,6 +122,14 @@ namespace SwitchInputToEnglish
         {
             KeyboardLayout defaultLayout = defaultkeyboardLayout();
             UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(ConfigKey_AutoTypeInputMethod, defaultLayout.Id);
+            
+            // If current language is not in the langauge list (maybe be removed).
+            // Just using the default language (the first langauge in list)
+            if (keyboardLayoutDictionary.ContainsKey(layoutId) == false)
+            {
+                layoutId = defaultLayout.Id;
+            }
+
             return layoutId;
         }
 
