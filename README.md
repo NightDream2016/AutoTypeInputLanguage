@@ -26,7 +26,7 @@ Tested OK on Windows 10 2004.
 下載 [AutoTypeInputLanguage.plgx](https://github.com/NightDream2016/AutoTypeInputLanguage/releases/download/v1.1.0/AutoTypeInputLanguage.plgx) 後複製至KeePass的Plugin目錄。
 
 ## 使用方法
-- 安裝此Plugin以後在KeePass的工具底下會多出一欄，其為目前使用者Windows的語系列表。
+- 安裝此Plugin以後在KeePass的 [工具] 功能表底下會多出一欄，其為目前使用者Windows的語系列表。
 - 選擇要使用的預設輸入法。
   - 系統上有 **英文(美國)** 的情況，Plugin會自動指定它為預設輸入法。若是沒有的話則會拿輸入法列表當中的第一個。
   - 可自由切換成你想要的輸入語言 (如果你真的想要用英數以外的語系做為密碼的話XD)
