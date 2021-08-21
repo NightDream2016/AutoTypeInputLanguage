@@ -24,11 +24,13 @@ namespace AutoTypeInputLanguage
             this.LanguageName = languageName;
             this.KeyboardName = keyboardName;
         }
+
+       
     }
 
     public static class KeyboardLayoutUtility
     {
-        private const UInt32 EnglishKeyboardID = 0x4090409;
+        public const UInt32 EnglishKeyboardLayoutID = 0x04090409;
         private const UInt32 KLF_SETFORPROCESS = 0x00000100;
         [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
@@ -51,7 +53,7 @@ namespace AutoTypeInputLanguage
 
         public static KeyboardLayout CreateEnglishKeyboardLayout()
         {
-            var keyboardLayoutId = EnglishKeyboardID;
+            var keyboardLayoutId = EnglishKeyboardLayoutID;
             KeyboardLayout layout = CreateKeyboardLayout(keyboardLayoutId);
             return layout;
         }
@@ -59,7 +61,7 @@ namespace AutoTypeInputLanguage
         public static void switchForegroundWindowKeyboardLayout(KeyboardLayout layout)
         {
             IntPtr hwnd = GetForegroundWindow();
-            PostMessage(hwnd, 0x0050, IntPtr.Zero, (IntPtr)layout.LanguageId);
+            PostMessage(hwnd, 0x0050, IntPtr.Zero, (IntPtr)layout.KeyboardId);
         }
 
         public static KeyboardLayout[] GetSystemKeyboardLayouts()

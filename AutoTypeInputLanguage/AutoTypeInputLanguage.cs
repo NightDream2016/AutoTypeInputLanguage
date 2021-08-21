@@ -17,7 +17,8 @@ namespace AutoTypeInputLanguage
         private const string PluginMenuTitle_English = "Auto Type Input Language";
         private const string PluginMenuTitle_Chinese = "自動輸入時的語言";
 
-        private Dictionary<UInt32, KeyboardLayout> keyboardLayoutDictionary = new Dictionary<UInt32, KeyboardLayout>();
+        private KeyboardLayout[] keyboardLayouts = KeyboardLayoutUtility.GetSystemKeyboardLayouts();
+        private KeyboardLayout inputKeyboardLayout = null;
 
         private IPluginHost m_host = null;
 
@@ -26,13 +27,7 @@ namespace AutoTypeInputLanguage
         public override bool Initialize(IPluginHost host)
         {
             m_host = host;
-
-            KeyboardLayout[] layouts = KeyboardLayoutUtility.GetSystemKeyboardLayouts();
-            foreach (KeyboardLayout layout in layouts)
-            {
-                keyboardLayoutDictionary.Add(layout.Id, layout);
-            }
-
+            setupInputKeyboardLayout();
             AutoType.FilterCompilePre += OnAutoType;
 
             return true;
@@ -63,17 +58,20 @@ namespace AutoTypeInputLanguage
                 return null;
             }
 
+            // To make the item list sync with system language setting.
+            reloadKeyboardLayouts();
+            setupInputKeyboardLayout();
+
             string menuTitle = isAppChinese() ? PluginMenuTitle_Chinese : PluginMenuTitle_English;
             ToolStripMenuItem stripMenuItem = new ToolStripMenuItem(menuTitle);
 
-            foreach (KeyboardLayout layout in keyboardLayoutList())
+            foreach (KeyboardLayout layout in keyboardLayouts)
             {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem();
                 menuItem.Text = layout.LanguageName;
                 menuItem.Tag = layout.Id;
                 menuItem.Click += this.OnMenuItemClicked;
                 stripMenuItem.DropDownItems.Add(menuItem);
-                
             }
 
             stripMenuItem.DropDownOpening += delegate (object sender, EventArgs e)
@@ -81,7 +79,7 @@ namespace AutoTypeInputLanguage
                 foreach (ToolStripMenuItem menuItem in stripMenuItem.DropDownItems)
                 {
                     UInt32 layoutIdFromItem = (UInt32)menuItem.Tag;
-                    if (layoutIdFromItem == autoTypeInputlayoutId())
+                    if (layoutIdFromItem == inputKeyboardLayout.Id)
                     {
                         UIUtil.SetChecked(menuItem, true);
                     }
@@ -98,8 +96,18 @@ namespace AutoTypeInputLanguage
         private void OnMenuItemClicked(object sender, EventArgs e)
         {
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
-            UInt32 layoutId = (UInt32)item.Tag;
-            setAutoTypeInputLayoutId(layoutId);
+            var selectedKeyboardLayoutId = (UInt32)item.Tag;
+
+            foreach (KeyboardLayout layout in keyboardLayouts)
+            {
+                if (layout.Id == selectedKeyboardLayoutId)
+                {
+                    inputKeyboardLayout = layout;
+                    break;
+                }
+            }
+
+            setKeyboardLayoutIdToConfig(selectedKeyboardLayoutId);
         }
 
         #endregion
@@ -108,59 +116,70 @@ namespace AutoTypeInputLanguage
 
         private void switchInputLanguage()
         {
-            UInt32 layoutId = autoTypeInputlayoutId();
-            KeyboardLayout layout = keyboardLayoutDictionary[layoutId];
-            KeyboardLayoutUtility.switchForegroundWindowKeyboardLayout(layout);
+            if (inputKeyboardLayout != null)
+            {
+                KeyboardLayoutUtility.switchForegroundWindowKeyboardLayout(inputKeyboardLayout);
+            }
+        }
+
+        #endregion
+
+        #region Setup
+
+        private KeyboardLayout defaultKeyboardLayout()
+        {
+            var defaultLayout = keyboardLayouts[0];
+
+            foreach (KeyboardLayout layout in keyboardLayouts)
+            {
+                if (layout.Id == KeyboardLayoutUtility.EnglishKeyboardLayoutID)
+                {
+                    defaultLayout = layout;
+                    break;
+                }
+            }
+
+            return defaultLayout;
+        }
+
+        private void setupInputKeyboardLayout()
+        {
+            var keyboardLayoutId = configKeyboardLayoutId();
+ 
+            foreach (KeyboardLayout layout in keyboardLayouts)
+            {
+                if (layout.Id == keyboardLayoutId)
+                {
+                    inputKeyboardLayout = layout;
+                    break;
+                }
+            }
+
+            if (inputKeyboardLayout == null)
+            {
+                inputKeyboardLayout = defaultKeyboardLayout();
+                setKeyboardLayoutIdToConfig(inputKeyboardLayout.Id);
+            }
+        }
+
+        private void reloadKeyboardLayouts()
+        {
+            keyboardLayouts = KeyboardLayoutUtility.GetSystemKeyboardLayouts();
         }
 
         #endregion
 
         #region ConfigSetting
 
-        private UInt32 autoTypeInputlayoutId()
+        private UInt32 configKeyboardLayoutId()
         {
-            KeyboardLayout defaultLayout = defaultkeyboardLayout();
-            UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(AutoTypeInputLanguage_KeyboardLayoutId, defaultLayout.Id);
-            
-            // If current language is not in the langauge list (maybe be removed).
-            // Just using the default language (the first langauge in list)
-            if (keyboardLayoutDictionary.ContainsKey(layoutId) == false)
-            {
-                layoutId = defaultLayout.Id;
-            }
-
+            UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(AutoTypeInputLanguage_KeyboardLayoutId, default(ulong));
             return layoutId;
         }
 
-        private void setAutoTypeInputLayoutId(UInt32 layoutId)
+        private void setKeyboardLayoutIdToConfig(UInt32 layoutId)
         {
-            m_host.CustomConfig.SetULong(AutoTypeInputLanguage_KeyboardLayoutId, layoutId);
-        }
-
-        #endregion
-
-        #region KeyboardLayoutManagement
-
-        private KeyboardLayout defaultkeyboardLayout()
-        {
-            var layoutList = keyboardLayoutList();
-            KeyboardLayout defaultLayout = layoutList[0];
-            KeyboardLayout englishLayout = KeyboardLayoutUtility.CreateEnglishKeyboardLayout();
-
-            if (keyboardLayoutDictionary.ContainsKey(englishLayout.Id))
-            {
-                defaultLayout = keyboardLayoutDictionary[englishLayout.Id];
-            }
-
-            return defaultLayout;
-        }
-
-        private KeyboardLayout[] keyboardLayoutList()
-        {
-            List<KeyboardLayout> layoutList = keyboardLayoutDictionary.Values.ToList();
-            layoutList.Sort((layout1, layout2) => layout1.Id.CompareTo(layout2.Id));
-
-            return layoutList.ToArray();
+            m_host.CustomConfig.SetULong(AutoTypeInputLanguage_KeyboardLayoutId, (ulong)layoutId);
         }
 
         #endregion
