@@ -28,7 +28,7 @@ namespace AutoTypeInputLanguage
         {
             m_host = host;
             setupInputKeyboardLayout();
-            AutoType.FilterCompilePre += OnAutoType;
+            AutoType.FilterSendPre += OnAutoType;
 
             return true;
         }
@@ -40,7 +40,7 @@ namespace AutoTypeInputLanguage
 
         public override void Terminate()
         {
-            AutoType.FilterCompilePre -= OnAutoType;
+            AutoType.FilterSendPre -= OnAutoType;
             
             m_host = null;
         }
