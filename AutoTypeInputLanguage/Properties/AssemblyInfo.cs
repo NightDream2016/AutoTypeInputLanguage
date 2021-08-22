@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // 組件的一般資訊是由下列的屬性集控制。
 // 變更這些屬性的值即可修改組件的相關
 // 資訊。
-[assembly: AssemblyTitle("Auto Type Input Language")]
+[assembly: AssemblyTitle("AutoTypeInputLanguage")]
 [assembly: AssemblyDescription("A keepass v2.x plugin that will auto-switch user's input language when using keepass auto-type , to prevent the input from incorrect due to the input method issue.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("NightDream")]
