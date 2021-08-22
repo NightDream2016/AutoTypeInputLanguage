@@ -38,7 +38,12 @@ namespace AutoTypeInputLanguage
             switchInputLanguage();
         }
 
-        public override string UpdateUrl => "https://raw.githubusercontent.com/NightDream2016/AutoTypeInputLanguage/master/VersionInfo";
+        public override string UpdateUrl
+        {
+            get {
+                return "https://raw.githubusercontent.com/NightDream2016/AutoTypeInputLanguage/master/VersionInfo";
+            }
+        }
 
         public override void Terminate()
         {
