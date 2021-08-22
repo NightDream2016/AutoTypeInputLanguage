@@ -38,6 +38,8 @@ namespace AutoTypeInputLanguage
             switchInputLanguage();
         }
 
+        public override string UpdateUrl => "https://raw.githubusercontent.com/NightDream2016/AutoTypeInputLanguage/master/VersionInfo";
+
         public override void Terminate()
         {
             AutoType.FilterSendPre -= OnAutoType;
