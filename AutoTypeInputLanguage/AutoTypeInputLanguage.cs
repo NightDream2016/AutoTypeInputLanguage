@@ -4,21 +4,22 @@ using KeePass.UI;
 
 using System;
 using System.Windows.Forms;
-using System.Linq;
-using System.Collections.Generic;
+using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace AutoTypeInputLanguage
 {
     public sealed class AutoTypeInputLanguageExt : Plugin
     {
-   
-        private const string AutoTypeInputLanguage_KeyboardLayoutId = "AutoTypeInputLanguage_KeyboardLayoutId";
+        [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")] public static extern int PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+        private const string AutoTypeInputLanguage_InputLanguage = "AutoTypeInputLanguage_InputLanguage";
         private const string PluginMenuTitle_English = "Auto Type Input Language";
         private const string PluginMenuTitle_Chinese = "自動輸入時的語言";
 
-        private KeyboardLayout[] keyboardLayouts = KeyboardLayoutUtility.GetSystemKeyboardLayouts();
-        private KeyboardLayout inputKeyboardLayout = null;
+        private InputLanguageCollection installedLanguages = InputLanguage.InstalledInputLanguages;
+        private InputLanguage currentInputLanguage = InputLanguage.CurrentInputLanguage;
 
         private IPluginHost m_host = null;
 
@@ -27,7 +28,6 @@ namespace AutoTypeInputLanguage
         public override bool Initialize(IPluginHost host)
         {
             m_host = host;
-            setupInputKeyboardLayout();
             AutoType.FilterSendPre += OnAutoType;
 
             return true;
@@ -66,27 +66,35 @@ namespace AutoTypeInputLanguage
             }
 
             // To make the item list sync with system language setting.
-            reloadKeyboardLayouts();
-            setupInputKeyboardLayout();
+            setupInputLanguages();
 
             string menuTitle = isAppChinese() ? PluginMenuTitle_Chinese : PluginMenuTitle_English;
             ToolStripMenuItem stripMenuItem = new ToolStripMenuItem(menuTitle);
 
-            foreach (KeyboardLayout layout in keyboardLayouts)
+            foreach (InputLanguage language in installedLanguages)
             {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem();
-                menuItem.Text = layout.LanguageName;
-                menuItem.Tag = layout.Id;
+                if (isWindowsVersionHigherThanEight())
+                {
+                    menuItem.Text = language.Culture.DisplayName;
+                }
+                else
+                {
+                    menuItem.Text = language.LayoutName;
+                }
+                
+                menuItem.Tag = language.Handle.ToString();
                 menuItem.Click += this.OnMenuItemClicked;
                 stripMenuItem.DropDownItems.Add(menuItem);
             }
+
 
             stripMenuItem.DropDownOpening += delegate (object sender, EventArgs e)
             {
                 foreach (ToolStripMenuItem menuItem in stripMenuItem.DropDownItems)
                 {
-                    UInt32 layoutIdFromItem = (UInt32)menuItem.Tag;
-                    if (layoutIdFromItem == inputKeyboardLayout.Id)
+                    String languageHandleFromItem = (String)menuItem.Tag;
+                    if (languageHandleFromItem == currentInputLanguage.Handle.ToString())
                     {
                         UIUtil.SetChecked(menuItem, true);
                     }
@@ -103,18 +111,19 @@ namespace AutoTypeInputLanguage
         private void OnMenuItemClicked(object sender, EventArgs e)
         {
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
-            var selectedKeyboardLayoutId = (UInt32)item.Tag;
+            var selectedLanguageHandle = (String)item.Tag;
 
-            foreach (KeyboardLayout layout in keyboardLayouts)
+            foreach (InputLanguage language in installedLanguages)
             {
-                if (layout.Id == selectedKeyboardLayoutId)
+                if (language.Handle.ToString() == selectedLanguageHandle)
                 {
-                    inputKeyboardLayout = layout;
+                    currentInputLanguage = language;
                     break;
                 }
             }
 
-            setKeyboardLayoutIdToConfig(selectedKeyboardLayoutId);
+            var handle = currentInputLanguage.Handle;
+            setInputLanguageHandleToConfig(handle.ToString());
         }
 
         #endregion
@@ -123,9 +132,9 @@ namespace AutoTypeInputLanguage
 
         private void switchInputLanguage()
         {
-            if (inputKeyboardLayout != null)
+            if (currentInputLanguage != null)
             {
-                KeyboardLayoutUtility.switchForegroundWindowKeyboardLayout(inputKeyboardLayout);
+                switchForegroundWindowInputLangauge(currentInputLanguage);
             }
         }
 
@@ -133,15 +142,15 @@ namespace AutoTypeInputLanguage
 
         #region Setup
 
-        private KeyboardLayout defaultKeyboardLayout()
+        private InputLanguage defaultInputLanguage()
         {
-            var defaultLayout = keyboardLayouts[0];
+            var defaultLayout = installedLanguages[0];
 
-            foreach (KeyboardLayout layout in keyboardLayouts)
+            foreach (InputLanguage language in installedLanguages)
             {
-                if (layout.Id == KeyboardLayoutUtility.EnglishKeyboardLayoutID)
+                if (language.Culture.Name == "en-US")
                 {
-                    defaultLayout = layout;
+                    defaultLayout = language;
                     break;
                 }
             }
@@ -149,44 +158,36 @@ namespace AutoTypeInputLanguage
             return defaultLayout;
         }
 
-        private void setupInputKeyboardLayout()
+        private void setupInputLanguages()
         {
-            var keyboardLayoutId = configKeyboardLayoutId();
+            var languageHandle = configInputLanguageHandle();
  
-            foreach (KeyboardLayout layout in keyboardLayouts)
+            foreach (InputLanguage language in installedLanguages)
             {
-                if (layout.Id == keyboardLayoutId)
+                if (language.Handle.ToString() == languageHandle)
                 {
-                    inputKeyboardLayout = layout;
+                    currentInputLanguage = language;
                     break;
                 }
             }
 
-            if (inputKeyboardLayout == null)
-            {
-                inputKeyboardLayout = defaultKeyboardLayout();
-                setKeyboardLayoutIdToConfig(inputKeyboardLayout.Id);
-            }
-        }
-
-        private void reloadKeyboardLayouts()
-        {
-            keyboardLayouts = KeyboardLayoutUtility.GetSystemKeyboardLayouts();
+            var handle = currentInputLanguage.Handle;
+            setInputLanguageHandleToConfig(handle.ToString());
         }
 
         #endregion
 
         #region ConfigSetting
 
-        private UInt32 configKeyboardLayoutId()
+        private String configInputLanguageHandle()
         {
-            UInt32 layoutId = (UInt32)m_host.CustomConfig.GetULong(AutoTypeInputLanguage_KeyboardLayoutId, default(ulong));
-            return layoutId;
+            String handleId = m_host.CustomConfig.GetString(AutoTypeInputLanguage_InputLanguage, "");
+            return handleId;
         }
 
-        private void setKeyboardLayoutIdToConfig(UInt32 layoutId)
+        private void setInputLanguageHandleToConfig(String languageHandle)
         {
-            m_host.CustomConfig.SetULong(AutoTypeInputLanguage_KeyboardLayoutId, (ulong)layoutId);
+            m_host.CustomConfig.SetString(AutoTypeInputLanguage_InputLanguage, languageHandle);
         }
 
         #endregion
@@ -213,6 +214,23 @@ namespace AutoTypeInputLanguage
 
             return languageCode;
         }
+
+        public bool isWindowsVersionHigherThanEight()
+        {
+            var version = System.Environment.OSVersion.Version;
+            if (version.Major >= 6 && version.Minor >= 2)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static void switchForegroundWindowInputLangauge(InputLanguage language)
+        {
+            IntPtr hwnd = GetForegroundWindow();
+            PostMessage(hwnd, 0x0050, IntPtr.Zero, language.Handle);
+        }
+
 
         #endregion
 
